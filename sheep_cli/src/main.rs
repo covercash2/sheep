@@ -4,7 +4,8 @@ extern crate ron;
 extern crate sheep;
 
 use clap::{App, AppSettings, Arg, SubCommand};
-use sheep::{AmethystFormat, InputSprite, SimplePacker};
+use sheep::{InputSprite, NamedFormat, SimplePacker};
+use std::str::FromStr;
 use std::{fs::File, io::prelude::*};
 
 fn main() {
@@ -50,7 +51,17 @@ fn main() {
 fn do_pack(input: Vec<String>, output_path: &str) {
     let mut sprites = Vec::new();
 
+    let mut names: Vec<String> = Vec::new();
+
     for path in input {
+        names.push(
+            std::path::PathBuf::from(&path)
+                .file_stem()
+                .and_then(|name| name.to_str())
+                .map(|name| String::from_str(name).expect("could not parse string from file name"))
+                .expect("could not extract file name"),
+        );
+
         let img = image::open(&path).expect("Failed to open image");
         let img = img.as_rgba8().expect("Failed to convert image to rgba8");
 
@@ -67,7 +78,8 @@ fn do_pack(input: Vec<String>, output_path: &str) {
     // NOTE(happenslol): By default, we're using rgba8 right now,
     // so the stride is always 4
     let sprite_sheet = sheep::pack::<SimplePacker>(sprites, 4);
-    let meta = sheep::encode(AmethystFormat, &sprite_sheet);
+    let format = NamedFormat::new(names);
+    let meta = sheep::encode(format, &sprite_sheet);
 
     let outbuf = image::RgbaImage::from_vec(
         sprite_sheet.dimensions.0,

@@ -1,6 +1,8 @@
 #[cfg(feature = "amethyst")]
 pub mod amethyst;
 
+pub mod named;
+
 use SpriteAnchor;
 
 pub trait Format {
