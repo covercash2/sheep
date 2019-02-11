@@ -65,9 +65,9 @@ pub fn pack<P: Packer>(input: Vec<InputSprite>, stride: usize) -> SpriteSheet {
     }
 }
 
-pub fn encode<F>(sprite_sheet: &SpriteSheet) -> F::Data
+pub fn encode<F>(formatter: F, sprite_sheet: &SpriteSheet) -> F::Data
 where
     F: Format,
 {
-    F::encode(sprite_sheet.dimensions, &sprite_sheet.anchors)
+    formatter.encode(sprite_sheet.dimensions, &sprite_sheet.anchors)
 }

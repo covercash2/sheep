@@ -67,13 +67,14 @@ fn do_pack(input: Vec<String>, output_path: &str) {
     // NOTE(happenslol): By default, we're using rgba8 right now,
     // so the stride is always 4
     let sprite_sheet = sheep::pack::<SimplePacker>(sprites, 4);
-    let meta = sheep::encode::<AmethystFormat>(&sprite_sheet);
+    let meta = sheep::encode(AmethystFormat, &sprite_sheet);
 
     let outbuf = image::RgbaImage::from_vec(
         sprite_sheet.dimensions.0,
         sprite_sheet.dimensions.1,
         sprite_sheet.bytes,
-    ).expect("Failed to construct image from sprite sheet bytes");
+    )
+    .expect("Failed to construct image from sprite sheet bytes");
 
     outbuf
         .save(format!("{}.png", output_path))
