@@ -41,14 +41,14 @@ impl From<&SpriteAnchor> for NamedSprite {
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize)]
-pub struct SerializedSpriteSheet {
+pub struct SerializedNamedSpriteSheet {
     spritesheet_width: f32,
     spritesheet_height: f32,
     sprites: Vec<NamedSprite>,
 }
 
 impl Format for NamedFormat {
-    type Data = SerializedSpriteSheet;
+    type Data = SerializedNamedSpriteSheet;
 
     fn encode(&self, dimensions: (u32, u32), sprites: &[SpriteAnchor]) -> Self::Data {
         let sprite_positions = sprites
@@ -61,7 +61,7 @@ impl Format for NamedFormat {
             })
             .collect::<Vec<NamedSprite>>();
 
-        SerializedSpriteSheet {
+        SerializedNamedSpriteSheet {
             spritesheet_width: dimensions.0 as f32,
             spritesheet_height: dimensions.1 as f32,
             sprites: sprite_positions,

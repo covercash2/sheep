@@ -4,9 +4,11 @@ extern crate ron;
 extern crate sheep;
 
 use clap::{App, AppSettings, Arg, SubCommand};
-use sheep::{InputSprite, NamedFormat, SimplePacker};
+use sheep::{AmethystFormat, Format, InputSprite, NamedFormat, SimplePacker};
 use std::str::FromStr;
 use std::{fs::File, io::prelude::*};
+
+const DEFAULT_FORMAT: &'static str = "amethyst";
 
 fn main() {
     let app = App::new("sheep")
@@ -26,6 +28,14 @@ fn main() {
                         .takes_value(true)
                         .required(false)
                         .default_value("out"),
+                )
+                .arg(
+                    Arg::with_name("format")
+                        .help("Output file format")
+                        .short("f")
+                        .long("format")
+                        .takes_value(true)
+                        .default_value(DEFAULT_FORMAT),
                 ),
         );
 
@@ -42,26 +52,39 @@ fn main() {
                 .value_of("output")
                 .expect("Unreachable: param has default value");
 
-            do_pack(input, out);
+            // default format is amethyst format
+
+            match matches.value_of("format") {
+                Some("amethyst_named") => {
+                    let names = input
+                        .iter()
+                        .map(|path| {
+                            std::path::PathBuf::from(&path)
+                                .file_stem()
+                                .and_then(|name| name.to_str())
+                                .map(|name| {
+                                    String::from_str(name)
+                                        .expect("could not parse string from file name")
+                                })
+                                .expect("could not extract file name")
+                        })
+                        .collect();
+                    do_pack(input, out, NamedFormat::new(names));
+                }
+                Some(DEFAULT_FORMAT) => do_pack(input, out, AmethystFormat),
+                _ => {
+                    panic!("Unknown format");
+                }
+            };
         }
         _ => {}
     }
 }
 
-fn do_pack(input: Vec<String>, output_path: &str) {
+fn do_pack<F: Format>(input: Vec<String>, output_path: &str, format: F) {
     let mut sprites = Vec::new();
 
-    let mut names: Vec<String> = Vec::new();
-
     for path in input {
-        names.push(
-            std::path::PathBuf::from(&path)
-                .file_stem()
-                .and_then(|name| name.to_str())
-                .map(|name| String::from_str(name).expect("could not parse string from file name"))
-                .expect("could not extract file name"),
-        );
-
         let img = image::open(&path).expect("Failed to open image");
         let img = img.as_rgba8().expect("Failed to convert image to rgba8");
 
@@ -78,7 +101,6 @@ fn do_pack(input: Vec<String>, output_path: &str) {
     // NOTE(happenslol): By default, we're using rgba8 right now,
     // so the stride is always 4
     let sprite_sheet = sheep::pack::<SimplePacker>(sprites, 4);
-    let format = NamedFormat::new(names);
     let meta = sheep::encode(format, &sprite_sheet);
 
     let outbuf = image::RgbaImage::from_vec(
