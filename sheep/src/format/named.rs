@@ -11,14 +11,14 @@ impl NamedFormat {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize)]
-struct NamedSprite {
-    name: String,
-    x: f32,
-    y: f32,
-    width: f32,
-    height: f32,
-    offsets: Option<[f32; 2]>,
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct NamedSprite {
+    pub name: String,
+    pub x: f32,
+    pub y: f32,
+    pub width: f32,
+    pub height: f32,
+    pub offsets: Option<[f32; 2]>,
 }
 
 impl NamedSprite {
@@ -40,11 +40,11 @@ impl From<&SpriteAnchor> for NamedSprite {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct SerializedNamedSpriteSheet {
-    spritesheet_width: f32,
-    spritesheet_height: f32,
-    sprites: Vec<NamedSprite>,
+    pub spritesheet_width: f32,
+    pub spritesheet_height: f32,
+    pub sprites: Vec<NamedSprite>,
 }
 
 impl Format for NamedFormat {
