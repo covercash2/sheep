@@ -17,7 +17,7 @@ pub use {
 
 #[cfg(feature = "amethyst")]
 pub use format::amethyst::{AmethystFormat, SerializedSpriteSheet, SpritePosition};
-pub use format::named::AmethystNamedFormat;
+pub use format::named::{AmethystNamedFormat, SerializedNamedSpriteSheet};
 
 use sprite::{create_pixel_buffer, write_sprite};
 
