@@ -6,7 +6,7 @@ pub struct AmethystNamedFormat;
 /// `NameSprite` represents a field in a `SerializedNamedSpriteSheet`.
 /// All of the fields, except `name`, mimic the `SpritePosition` struct.
 #[derive(Clone, Debug, PartialEq, Serialize)]
-struct NamedSpritePosition {
+pub struct NamedSpritePosition {
     pub name: String,
     pub x: f32,
     pub y: f32,
@@ -33,9 +33,9 @@ impl From<(&SpriteAnchor, String)> for NamedSpritePosition {
 /// instead of `SpriteAnchor`s
 #[derive(Clone, Debug, PartialEq, Serialize)]
 pub struct SerializedNamedSpriteSheet {
-    spritesheet_width: f32,
-    spritesheet_height: f32,
-    sprites: Vec<NamedSpritePosition>,
+    pub spritesheet_width: f32,
+    pub spritesheet_height: f32,
+    pub sprites: Vec<NamedSpritePosition>,
 }
 
 impl Format for AmethystNamedFormat {
