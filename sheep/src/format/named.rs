@@ -7,12 +7,12 @@ pub struct AmethystNamedFormat;
 /// All of the fields, except `name`, mimic the `SpritePosition` struct.
 #[derive(Clone, Debug, PartialEq, Serialize)]
 struct NamedSpritePosition {
-    name: String,
-    x: f32,
-    y: f32,
-    width: f32,
-    height: f32,
-    offsets: Option<[f32; 2]>,
+    pub name: String,
+    pub x: f32,
+    pub y: f32,
+    pub width: f32,
+    pub height: f32,
+    pub offsets: Option<[f32; 2]>,
 }
 
 impl From<(&SpriteAnchor, String)> for NamedSpritePosition {
