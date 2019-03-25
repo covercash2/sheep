@@ -17,7 +17,12 @@ impl Packer for SimplePacker {
         for sprite in sprites.iter() {
             // Push the sprite to the next free anchor
             let next_free = *free.first().expect("No free anchor");
-            absolute.push(SpriteAnchor::new(sprite.id, next_free, sprite.dimensions));
+            absolute.push(SpriteAnchor::new(
+                sprite.id,
+                sprite.name.clone(),
+                next_free,
+                sprite.dimensions,
+            ));
 
             // find new anchors
             let mut new_right = (next_free.0 + sprite.dimensions.0, next_free.1);
@@ -98,7 +103,7 @@ mod tests {
     #[test]
     fn pack_square() {
         let sprites = (0..16)
-            .map(|i| SpriteData::new(i, (20, 20)))
+            .map(|i| SpriteData::new(i, String::new(), (20, 20)))
             .collect::<Vec<SpriteData>>();
 
         let result = SimplePacker::pack(&sprites);

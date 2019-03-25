@@ -8,7 +8,7 @@ use clap::{App, AppSettings, Arg, SubCommand};
 use image::RgbaImage;
 use serde::Serialize;
 use sheep::{AmethystFormat, AmethystNamedFormat, Format, InputSprite, SimplePacker};
-use std::str::FromStr;
+use std::path::PathBuf;
 use std::{fs::File, io::prelude::*};
 
 const DEFAULT_FORMAT: &'static str = "amethyst";
@@ -58,25 +58,9 @@ fn main() {
                 .expect("Unreachable: param has default value");
 
             match matches.value_of("format") {
-                Some("amethyst_named") => {
-                    let names = input
-                        .iter()
-                        .map(|path| {
-                            std::path::PathBuf::from(&path)
-                                .file_stem()
-                                .and_then(|name| name.to_str())
-                                .map(|name| {
-                                    String::from_str(name)
-                                        .expect("could not parse string from file name")
-                                })
-                                .expect("Failed to extract file name")
-                        })
-                        .collect();
-
-                    do_pack::<AmethystNamedFormat>(input, names)
-                        .map(|(output_image, meta)| write_files(out, output_image, meta))
-                        .expect("Failed to pack sprites")
-                }
+                Some("amethyst_named") => do_pack::<AmethystNamedFormat>(input, ())
+                    .map(|(output_image, meta)| write_files(out, output_image, meta))
+                    .expect("Failed to pack sprites"),
                 Some(DEFAULT_FORMAT) => do_pack::<AmethystFormat>(input, ())
                     .map(|(output_image, meta)| write_files(out, output_image, meta))
                     .expect("Failed to pack sprites"),
@@ -108,7 +92,17 @@ where
             .flat_map(|it| it.data.iter().map(|it| *it))
             .collect::<Vec<u8>>();
 
-        let sprite = InputSprite { dimensions, bytes };
+        let name = PathBuf::from(path)
+            .file_stem()
+            .and_then(|os_str| os_str.to_str())
+            .map(|s| String::from(s))
+            .expect("could not get file name for path");
+
+        let sprite = InputSprite {
+            dimensions,
+            name,
+            bytes,
+        };
         sprites.push(sprite);
     }
 

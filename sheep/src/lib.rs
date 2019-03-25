@@ -38,7 +38,7 @@ pub fn pack<P: Packer>(input: Vec<InputSprite>, stride: usize) -> SpriteSheet {
 
     let sprite_data = sprites
         .iter()
-        .map(|it| it.data)
+        .map(|it| it.data.clone())
         .collect::<Vec<SpriteData>>();
 
     let packer_result = P::pack(&sprite_data);

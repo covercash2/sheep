@@ -1,5 +1,6 @@
 #[derive(Clone)]
 pub struct InputSprite {
+    pub name: String,
     pub bytes: Vec<u8>,
     pub dimensions: (u32, u32),
 }
@@ -16,35 +17,43 @@ impl Sprite {
             bytes: input.bytes,
             data: SpriteData {
                 id: index,
+                name: input.name,
                 dimensions: input.dimensions,
             },
         }
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct SpriteData {
     pub id: usize,
+    pub name: String,
     pub dimensions: (u32, u32),
 }
 
 impl SpriteData {
-    pub fn new(id: usize, dimensions: (u32, u32)) -> Self {
-        SpriteData { id, dimensions }
+    pub fn new(id: usize, name: String, dimensions: (u32, u32)) -> Self {
+        SpriteData {
+            id,
+            name,
+            dimensions,
+        }
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct SpriteAnchor {
     pub id: usize,
+    pub name: String,
     pub position: (u32, u32),
     pub dimensions: (u32, u32),
 }
 
 impl SpriteAnchor {
-    pub fn new(id: usize, position: (u32, u32), dimensions: (u32, u32)) -> Self {
+    pub fn new(id: usize, name: String, position: (u32, u32), dimensions: (u32, u32)) -> Self {
         SpriteAnchor {
             id,
+            name,
             position,
             dimensions,
         }

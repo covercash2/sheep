@@ -15,14 +15,14 @@ pub struct NamedSpritePosition {
     pub offsets: Option<[f32; 2]>,
 }
 
-impl From<(&SpriteAnchor, String)> for NamedSpritePosition {
-    fn from(anchor: (&SpriteAnchor, String)) -> NamedSpritePosition {
+impl From<&SpriteAnchor> for NamedSpritePosition {
+    fn from(anchor: &SpriteAnchor) -> NamedSpritePosition {
         return NamedSpritePosition {
-            name: anchor.1,
-            x: anchor.0.position.0 as f32,
-            y: anchor.0.position.1 as f32,
-            width: anchor.0.dimensions.0 as f32,
-            height: anchor.0.dimensions.1 as f32,
+            name: anchor.name.clone(),
+            x: anchor.position.0 as f32,
+            y: anchor.position.1 as f32,
+            width: anchor.dimensions.0 as f32,
+            height: anchor.dimensions.1 as f32,
             offsets: None,
         };
     }
@@ -40,16 +40,15 @@ pub struct SerializedNamedSpriteSheet {
 
 impl Format for AmethystNamedFormat {
     type Data = SerializedNamedSpriteSheet;
-    type Options = Vec<String>;
+    type Options = ();
 
     fn encode(
         dimensions: (u32, u32),
         sprites: &[SpriteAnchor],
-        options: Self::Options,
+        _options: Self::Options,
     ) -> Self::Data {
         let sprite_positions = sprites
             .iter()
-            .zip(options.into_iter())
             .map(Into::into)
             .collect::<Vec<NamedSpritePosition>>();
 
